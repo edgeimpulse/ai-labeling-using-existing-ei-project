@@ -10,4 +10,4 @@ RUN npm ci
 COPY . ./
 RUN npm run build
 
-ENTRYPOINT [ "node",  "build/llm-labeling.js" ]
+ENTRYPOINT [ "node",  "build/label-using-existing-project.js" ]
