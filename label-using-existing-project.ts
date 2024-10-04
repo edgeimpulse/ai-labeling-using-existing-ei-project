@@ -103,6 +103,11 @@ catch (ex2) {
                 `target project: ${project.labelingMethod}). Both projects need to have the same labeling method.`);
         }
 
+        // try and get the impulse, so we error out if the impulse is not there
+        await sourceProjectApi.impulse.getImpulse(sourceProject.id, {
+            impulseId: sourceProjectImpulseIdArgv
+        });
+
         let samplesToProcess: models.Sample[];
 
         console.log(`Finding data by ID...`);
