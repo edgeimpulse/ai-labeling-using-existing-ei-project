@@ -1,0 +1,26 @@
+[{
+    "name": "Source project",
+    "value": "",
+    "type": "project",
+    "help": "Project to use as a labeling source",
+    "param": "source-project-api-key"
+}, {
+    "name": "Impulse ID",
+    "value": "",
+    "type": "int",
+    "help": "Optional impulse ID, if not selected we'll use the last used impulse.",
+    "param": "source-project-impulse-id",
+    "optional": true
+}, {
+    "name": "Delete existing bounding boxes?",
+    "value": true,
+    "type": "flag",
+    "help": "If any existing bounding boxes are present, remove them (only applies to object detection datasets).",
+    "param": "delete-existing-bounding-boxes"
+}, {
+    "name": "Concurrency",
+    "value": "10",
+    "type": "int",
+    "help": "Number of samples to label in parallel",
+    "param": "concurrency"
+}]
