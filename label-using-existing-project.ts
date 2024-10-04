@@ -24,7 +24,9 @@ program
     .requiredOption('--source-project-api-key <api-key>', 'API key of the project you want to use to label with')
     .option('--source-project-impulse-id <impulse-id>', 'Optional impulse ID for the source project')
     .option('--delete-existing-bounding-boxes', 'Delete existing bounding boxes (if present)')
-    .option('--concurrency <n>', `Concurrency (default: 1)`)
+    .option('--keep-bounding-boxes <map>',
+        `If this field is filled, only bounding boxes in this field are returned (only applies to object detection datasets). ` +
+        `E.g.: bottle, person discards any other bounding boxes. To remap add the remapped label in parenthesis e.g. 'bottle (beer)'`)
     .requiredOption('--data-ids-file <file>', 'File with IDs (as JSON)')
     .option('--propose-actions <job-id>', 'If this flag is passed in, only propose suggested actions')
     .option('--verbose', 'Enable debug logs')
@@ -36,12 +38,39 @@ const sourceProjectApi = new EdgeImpulseApi({ endpoint: API_URL });
 
 const sourceProjectApiKeyArgv = <string>program.sourceProjectApiKey;
 const sourceProjectImpulseIdArgv = program.sourceProjectImpulseId ? Number(program.sourceProjectImpulseId) : 1;
-const concurrencyArgv = program.concurrency ? Number(program.concurrency) : 1;
 const dataIdsFile = <string>program.dataIdsFile;
 const proposeActionsJobId = program.proposeActions ?
     Number(program.proposeActions) :
     undefined;
 const deleteExistingBbs = <boolean>program.deleteExistingBoundingBoxes;
+
+let keepBoundingBoxes: Map<string, string> | undefined;
+if (program.keepBoundingBoxes) {
+    keepBoundingBoxes = new Map();
+
+    // the replacement looks weird; but if calling this from CLI like
+    // "--prompt 'test\nanother line'" we'll get this still escaped
+    // (you could use $'test\nanotherline' but we won't do that in the Edge Impulse backend)
+    const keepBoundingBoxesArgv = (<string>program.keepBoundingBoxes).replace('\\n', '\n');
+
+    for (let entry of keepBoundingBoxesArgv.split(/[\n|,]/g)) {
+        entry = entry.trim();
+        if (entry.indexOf('(') > -1) {
+            console.log(`entry "${entry}"`);
+            let m = entry.match(/(.*?)\((.*?)\)$/);
+            if (!m || m.length < 2) {
+                console.log(`Failed to parse --keep-bounding-boxes: Cannot parse entry "${entry}".`);
+                process.exit(1);
+            }
+            let [ _, currLabel, newLabel ] = m;
+            keepBoundingBoxes.set(currLabel.toLowerCase().trim(), newLabel.trim());
+        }
+        else {
+            keepBoundingBoxes.set(entry.toLowerCase(), entry.toLowerCase());
+        }
+    }
+}
+console.log('keepBoundingBoxes', keepBoundingBoxes);
 
 if (proposeActionsJobId && isNaN(proposeActionsJobId)) {
     console.log('--propose-actions should be numeric');
@@ -89,7 +118,17 @@ catch (ex2) {
         const sourceProject = (await sourceProjectApi.projects.listProjects()).projects[0];
 
         console.log(`Labeling data in "${project.owner} / ${project.name}" using model from "${sourceProject.owner} / ${sourceProject.name}"`);
-        console.log(`    Concurrency: ${concurrencyArgv}`);
+        if (keepBoundingBoxes) {
+            console.log('    Bounding boxes to keep:');
+            for (let [ label, newLabel ] of keepBoundingBoxes.entries()) {
+                if (label === newLabel) {
+                    console.log(`        - ${label}`);
+                }
+                else {
+                    console.log(`        - ${label} (remap to ${newLabel})`);
+                }
+            }
+        }
         if (dataIds.length < 6) {
             console.log(`    IDs: ${dataIds.join(', ')}`);
         }
@@ -175,7 +214,24 @@ catch (ex2) {
                         if (!deleteExistingBbs) {
                             newBbs = sample.boundingBoxes;
                         }
-                        newBbs = newBbs.concat(classifyRes.boundingBoxes);
+
+                        for (let bb of classifyRes.boundingBoxes) {
+                            if (keepBoundingBoxes) {
+                                const newLabel = keepBoundingBoxes.get(bb.label.toLowerCase());
+
+                                if (!newLabel) {
+                                    continue;
+                                }
+
+                                if (bb.label.toLowerCase() !== newLabel.toLowerCase()) {
+                                    bb.label = newLabel;
+                                }
+                                newBbs.push(bb);
+                            }
+                            else {
+                                newBbs.push(bb);
+                            }
+                        }
 
                         // dry-run, only propose?
                         if (proposeActionsJobId) {
@@ -243,7 +299,7 @@ catch (ex2) {
         try {
             console.log(`Labeling ${total.toLocaleString()} samples...`);
 
-            await asyncPool(concurrencyArgv, samplesToProcess.slice(0, total), labelSample);
+            await asyncPool(10, samplesToProcess.slice(0, total), labelSample);
 
             clearInterval(updateIv);
 

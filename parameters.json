@@ -18,9 +18,11 @@
     "help": "If any existing bounding boxes are present, remove them (only applies to object detection datasets).",
     "param": "delete-existing-bounding-boxes"
 }, {
-    "name": "Concurrency",
-    "value": "10",
-    "type": "int",
-    "help": "Number of samples to label in parallel",
-    "param": "concurrency"
+    "name": "Only keep bounding boxes with label",
+    "value": "",
+    "type": "string",
+    "multiline": true,
+    "help": "If this field is filled, only bounding boxes in this field are returned (only applies to object detection datasets). E.g.: bottle, person discards any other bounding boxes. To remap add the remapped label in parenthesis e.g. 'bottle (beer)'",
+    "param": "keep-bounding-boxes",
+    "optional": true
 }]
