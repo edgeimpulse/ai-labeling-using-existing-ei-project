@@ -1,28 +1,41 @@
-[{
-    "name": "Source project",
-    "value": "",
-    "type": "project",
-    "help": "Project to use as a labeling source",
-    "param": "source-project-api-key"
-}, {
-    "name": "Impulse ID",
-    "value": "",
-    "type": "int",
-    "help": "Optional impulse ID, if not selected we'll use the last used impulse.",
-    "param": "source-project-impulse-id",
-    "optional": true
-}, {
-    "name": "Delete existing bounding boxes?",
-    "value": true,
-    "type": "flag",
-    "help": "If any existing bounding boxes are present, remove them (only applies to object detection datasets).",
-    "param": "delete-existing-bounding-boxes"
-}, {
-    "name": "Only keep bounding boxes with label",
-    "value": "",
-    "type": "string",
-    "multiline": true,
-    "help": "If this field is filled, only bounding boxes in this field are returned (only applies to object detection datasets). E.g.: bottle, person discards any other bounding boxes. To remap add the remapped label in parenthesis e.g. 'bottle (beer)'",
-    "param": "keep-bounding-boxes",
-    "optional": true
-}]
+{
+    "version": 1,
+    "type": "ai-action",
+    "info": {
+        "name": "Label using existing project (images only)",
+        "description": "Use another Edge Impulse project to label your dataset (image classification or object detection)."
+    },
+    "parameters": [
+        {
+            "name": "Source project",
+            "value": "",
+            "type": "project",
+            "help": "Project to use as a labeling source",
+            "param": "source-project-api-key"
+        },
+        {
+            "name": "Impulse ID",
+            "value": "",
+            "type": "int",
+            "help": "Optional impulse ID, if not selected we'll use the last used impulse.",
+            "param": "source-project-impulse-id",
+            "optional": true
+        },
+        {
+            "name": "Delete existing bounding boxes?",
+            "value": true,
+            "type": "flag",
+            "help": "If any existing bounding boxes are present, remove them (only applies to object detection datasets).",
+            "param": "delete-existing-bounding-boxes"
+        },
+        {
+            "name": "Only keep bounding boxes with label",
+            "value": "",
+            "type": "string",
+            "multiline": true,
+            "help": "If this field is filled, only bounding boxes in this field are returned (only applies to object detection datasets). E.g.: bottle, person discards any other bounding boxes. To remap add the remapped label in parenthesis e.g. 'bottle (beer)'",
+            "param": "keep-bounding-boxes",
+            "optional": true
+        }
+    ]
+}
