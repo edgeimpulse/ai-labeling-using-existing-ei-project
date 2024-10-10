@@ -56,7 +56,6 @@ if (program.keepBoundingBoxes) {
     for (let entry of keepBoundingBoxesArgv.split(/[\n|,]/g)) {
         entry = entry.trim();
         if (entry.indexOf('(') > -1) {
-            console.log(`entry "${entry}"`);
             let m = entry.match(/(.*?)\((.*?)\)$/);
             if (!m || m.length < 2) {
                 console.log(`Failed to parse --keep-bounding-boxes: Cannot parse entry "${entry}".`);
@@ -70,8 +69,6 @@ if (program.keepBoundingBoxes) {
         }
     }
 }
-console.log('keepBoundingBoxes', keepBoundingBoxes);
-
 if (proposeActionsJobId && isNaN(proposeActionsJobId)) {
     console.log('--propose-actions should be numeric');
     process.exit(1);
