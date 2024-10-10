@@ -51,7 +51,7 @@ if (program.keepBoundingBoxes) {
     // the replacement looks weird; but if calling this from CLI like
     // "--prompt 'test\nanother line'" we'll get this still escaped
     // (you could use $'test\nanotherline' but we won't do that in the Edge Impulse backend)
-    const keepBoundingBoxesArgv = (<string>program.keepBoundingBoxes).replace('\\n', '\n');
+    const keepBoundingBoxesArgv = (<string>program.keepBoundingBoxes).replaceAll('\\n', '\n');
 
     for (let entry of keepBoundingBoxesArgv.split(/[\n|,]/g)) {
         entry = entry.trim();
