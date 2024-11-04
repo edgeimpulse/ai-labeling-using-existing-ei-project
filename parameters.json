@@ -35,7 +35,9 @@
             "multiline": true,
             "help": "If this field is filled, only bounding boxes in this field are returned (only applies to object detection datasets). E.g.: bottle, person discards any other bounding boxes. To remap add the remapped label in parenthesis e.g. 'bottle (beer)'",
             "param": "keep-bounding-boxes",
-            "optional": true
+            "optional": true,
+            "hint": "Separate labels by a newline. To remap, add the remapped label in parenthesis, e.g. 'bottle (beer)'.",
+            "placeholder": "bottle (beer)\ncoffee"
         }
     ]
 }

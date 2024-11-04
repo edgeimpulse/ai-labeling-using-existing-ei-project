@@ -236,7 +236,7 @@ catch (ex2) {
                                 jobId: proposeActionsJobId,
                                 proposedChanges: {
                                     boundingBoxes: newBbs,
-                                }
+                                },
                             });
                         }
                         // actually perform actions
@@ -332,6 +332,7 @@ async function listDataByIds(projectId: number, ids: number[]) {
                 labels: '',
                 offset: offset,
                 limit: limit,
+                proposedActionsJobId: proposeActionsJobId,
             });
             if (ret.samples.length === 0) {
                 break;
@@ -351,6 +352,7 @@ async function listDataByIds(projectId: number, ids: number[]) {
                 labels: '',
                 offset: offset,
                 limit: limit,
+                proposedActionsJobId: proposeActionsJobId,
             });
             if (ret.samples.length === 0) {
                 break;
