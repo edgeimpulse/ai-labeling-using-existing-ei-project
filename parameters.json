@@ -3,7 +3,11 @@
     "type": "ai-action",
     "info": {
         "name": "Image labeling with pretrained models",
-        "description": "Use any other Edge Impulse project to label your dataset (image classification or object detection). You can upload any pretrained model by creating a new project, and selecting 'Upload your model'."
+        "description": "Use any other Edge Impulse project to label your dataset (image classification or object detection). You can upload any pretrained model by creating a new project, and selecting 'Upload your model'.",
+        "operatesOn": [
+            "images_object_detection",
+            "images_single_label"
+        ]
     },
     "parameters": [
         {
